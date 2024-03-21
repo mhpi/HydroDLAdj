@@ -189,10 +189,6 @@ warmuplength = 730 ## Use 2 years training data to warmup the simulation in vali
 xTrain_val = np.concatenate((xTrain[:,-warmuplength:,:], xTrain_val), axis= 1)
 data_norm_val = np.concatenate((data_norm[:,-warmuplength:,:], data_norm_val), axis= 1)
 
-y = np.load("/data/yxs275/NROdeSolver/CAMELSData/obs_test.npy")
-x = np.load("/data/yxs275/NROdeSolver/CAMELSData/HBV_test.npy")[:,-y.shape[1]:,:]
-z = np.load("/data/yxs275/NROdeSolver/CAMELSData/LSTM_test.npy")[:,-y.shape[1]:,:]
-
 
 test_module.testModel(xTrain_val,
                       streamflow_data_val,
