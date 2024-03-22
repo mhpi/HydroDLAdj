@@ -152,7 +152,7 @@ train_module.trainModel(xTrain,
            saveFolder=saveFolder,
            routn=routn,
            model_name=model_name,
-           useAD_efficient = False,
+           useAD_efficient = True,
                )
 
 
@@ -205,5 +205,5 @@ test_module.testModel(xTrain_val,
                       saveFolder=saveFolder,
                       routn=routn,
                       model_name=model_name,
-                      useAD_efficient = False,
+                      useAD_efficient = True,
                       )
