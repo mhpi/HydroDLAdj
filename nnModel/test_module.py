@@ -27,7 +27,8 @@ def testModel( x,
                routn = 15,
                dydrop = 0.0,
                routDy = False,
-               model_name = "HBV_Module"
+               model_name = "HBV_Module",
+               useAD_efficient = True,
                ):
 
 
@@ -94,7 +95,7 @@ def testModel( x,
 
         f = PBMmodel(xTest, nfea)
 
-        M = MOL(f, nS, nflux, nt, bsDefault=bsnew, mtd=0, dtDefault=delta_t,eval = True)
+        M = MOL(f, nS, nflux, nt, bsDefault=bsnew, mtd=0, dtDefault=delta_t,eval = True,AD_efficient=useAD_efficient)
 
         parstaFull = hbvpara[-1, :, :].unsqueeze(0).repeat([nt, 1, 1])  # static matrix
         parhbvFull = torch.clone(parstaFull)
@@ -189,7 +190,7 @@ def testModel( x,
 
     print("NSE,KGE,'PBiaslow','PBiashigh','PBiasother', mean lowRMSE, highRMSE, and midRMSE of all basins in testing period: ", np.nanmedian(dataBox[0][0]),
           np.nanmedian(dataBox[1][0]), np.nanmedian(dataBox[2][0]), np.nanmedian(dataBox[3][0]),
-          np.nanmedian(dataBox[4][0]), np.nanmean(dataBox[5][0]),np.nanmean(dataBox[6][0]), np.nanmean(dataBox[7][0]))
+          np.nanmedian(dataBox[4][0]), np.nanmedian(dataBox[5][0]),np.nanmedian(dataBox[6][0]), np.nanmedian(dataBox[7][0]))
 
 
 

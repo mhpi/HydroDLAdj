@@ -29,7 +29,8 @@ def trainModel(x,
                routn=15,
                dydrop=0.0,
                routDy = False,
-               model_name = "HBV_Module"
+               model_name = "HBV_Module",
+               useAD_efficient = True,
                ):
     package_name = "HydroDLAdj.HydroModels"
     model_import_string = f"{package_name}.{model_name}"
@@ -93,7 +94,7 @@ def trainModel(x,
 
             f_warm_up = PBMmodel(xTrain[:buffTime, :, :], nfea)
 
-            M_warm_up = MOL(f_warm_up, nS, nflux, buffTime, bsDefault=bsnew, mtd=0, dtDefault=delta_t)
+            M_warm_up = MOL(f_warm_up, nS, nflux, buffTime, bsDefault=bsnew, mtd=0, dtDefault=delta_t,AD_efficient=useAD_efficient)
 
             para_warm_up = hbvpara[buffTime - 1, :, :].unsqueeze(0).repeat([buffTime, 1, 1])
             y_warm_up = M_warm_up.nsteps_pDyn(para_warm_up, y0)
@@ -108,7 +109,7 @@ def trainModel(x,
                 comPar = dynPar * (1 - drmask) + staPar * drmask
                 parhbvFull[:, :, ix - 1] = comPar
             f = PBMmodel(xTrain[buffTime:, :, :], nfea)
-            M = MOL(f, nS, nflux, rho, bsDefault=bsnew, dtDefault=delta_t, mtd=0)
+            M = MOL(f, nS, nflux, rho, bsDefault=bsnew, dtDefault=delta_t, mtd=0,AD_efficient=useAD_efficient)
             ### Newton iterations with adjoint
             ySolution = M.nsteps_pDyn(parhbvFull, y_warm_up[-1, :, :])
 

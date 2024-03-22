@@ -1,6 +1,6 @@
 import torch
 
-def batchJacobian_AD_loop(y, x, graphed=False, batchx=True):
+def batchJacobian_AD_slow(y, x, graphed=False, batchx=True):
     if y.ndim == 1:
         y = y.unsqueeze(1)
     ny = y.shape[-1]
@@ -27,3 +27,5 @@ def batchJacobian_AD_loop(y, x, graphed=False, batchx=True):
         jacobian = jacobian.detach()
 
     return jacobian
+
+

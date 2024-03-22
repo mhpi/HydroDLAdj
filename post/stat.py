@@ -4,7 +4,6 @@ import scipy.stats
 
 keyLst = ['Bias', 'RMSE', 'ubRMSE', 'Corr']
 
-
 def statError(pred, target):
     ngrid, nt = pred.shape
     # Bias
@@ -18,7 +17,6 @@ def statError(pred, target):
     targetAnom = target - targetMean
     ubRMSE = np.sqrt(np.nanmean((predAnom - targetAnom)**2, axis=1))
 
-
     # rho R2 NSE
     Corr = np.full(ngrid, np.nan)
     CorrSp = np.full(ngrid, np.nan)
@@ -28,6 +26,10 @@ def statError(pred, target):
     PBiashigh = np.full(ngrid, np.nan)
     PBias = np.full(ngrid, np.nan)
     PBiasother = np.full(ngrid, np.nan)
+    absPBiaslow = np.full(ngrid, np.nan)
+    absPBiashigh = np.full(ngrid, np.nan)
+
+    absPBiasother = np.full(ngrid, np.nan)
     KGE = np.full(ngrid, np.nan)
     KGE12 = np.full(ngrid, np.nan)
     RMSElow = np.full(ngrid, np.nan)
@@ -55,9 +57,15 @@ def statError(pred, target):
             lowtarget = target_sort[:indexlow]
             hightarget = target_sort[indexhigh:]
             othertarget = target_sort[indexlow:indexhigh]
-            PBiaslow[k] = np.sum(abs(lowpred - lowtarget)) / (np.sum(lowtarget+0.0001) )* 100
-            PBiashigh[k] = np.sum(abs(highpred - hightarget) )/ np.sum(hightarget) * 100
-            PBiasother[k] = np.sum(abs(otherpred - othertarget)) / np.sum(othertarget) * 100
+            absPBiaslow[k] = np.sum(abs(lowpred - lowtarget)) / (np.sum(lowtarget+0.0001) )* 100
+            absPBiashigh[k] = np.sum(abs(highpred - hightarget) )/ np.sum(hightarget) * 100
+            absPBiasother[k] = np.sum(abs(otherpred - othertarget)) / np.sum(othertarget) * 100
+            PBiaslow[k] = np.sum((lowpred - lowtarget)) / (np.sum(lowtarget) +0.0001)* 100
+            PBiashigh[k] = np.sum((highpred - hightarget) )/ np.sum(hightarget) * 100
+            PBiasother[k] = np.sum((otherpred - othertarget)) / np.sum(othertarget) * 100
+
+
+
             RMSElow[k] = np.sqrt(np.nanmean((lowpred - lowtarget)**2))
             RMSEhigh[k] = np.sqrt(np.nanmean((highpred - hightarget)**2))
             RMSEother[k] = np.sqrt(np.nanmean((otherpred - othertarget)**2))
@@ -79,6 +87,7 @@ def statError(pred, target):
                 NSE[k] = 1-SSRes/SST
 
     outDict = dict(Bias=Bias, RMSE=RMSE, ubRMSE=ubRMSE, Corr=Corr, CorrSp=CorrSp, R2=R2, NSE=NSE,
+                   absFLV=absPBiaslow, absFHV=absPBiashigh, absPBiasother=absPBiasother,
                    FLV=PBiaslow, FHV=PBiashigh, PBias=PBias, PBiasother=PBiasother, KGE=KGE, KGE12=KGE12,
                    lowRMSE=RMSElow, highRMSE=RMSEhigh, midRMSE=RMSEother)
     return outDict

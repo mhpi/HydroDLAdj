@@ -26,7 +26,7 @@ torch.backends.cudnn.deterministic = True
 torch.backends.cudnn.benchmark = False
 
 ## Set the GPU machine to use
-gpuid = 0
+gpuid = 7
 torch.cuda.set_device(gpuid)
 device = torch.device("cuda")
 dtype=torch.float32
@@ -151,7 +151,8 @@ train_module.trainModel(xTrain,
            buffTime=buffTime,
            saveFolder=saveFolder,
            routn=routn,
-           model_name=model_name
+           model_name=model_name,
+           useAD_efficient = False,
                )
 
 
@@ -203,5 +204,6 @@ test_module.testModel(xTrain_val,
                       bs = testbs,
                       saveFolder=saveFolder,
                       routn=routn,
-                      model_name=model_name
+                      model_name=model_name,
+                      useAD_efficient = False,
                       )

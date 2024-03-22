@@ -6,7 +6,7 @@ newtonAdj = NewtonSolve.apply
 class MOL(torch.nn.Module):
   # Method of Lines time integrator as a nonlinear equation G(x, p, xt, t, auxG)=0.
   # rhs is preloaded at construct and is the equation for the right hand side of the equation.
-    def __init__(self, rhsFunc,ny,nflux,rho, bsDefault =1 , mtd = 0, dtDefault=0, solveAdj = newtonAdj,eval = False):
+    def __init__(self, rhsFunc,ny,nflux,rho, bsDefault =1 , mtd = 0, dtDefault=0, solveAdj = newtonAdj,eval = False,AD_efficient=True):
         super(MOL, self).__init__()
         self.mtd = mtd # time discretization method. =0 for backward Euler
         self.rhs = rhsFunc
@@ -17,6 +17,7 @@ class MOL(torch.nn.Module):
         self.rho = rho
         self.solveAdj = solveAdj
         self.eval = eval
+        self.AD_efficient = AD_efficient
 
     def forward(self, x, p, xt, t, auxG): # take one step
         # xt is x^{t}. trying to solve for x^{t+1}
@@ -46,7 +47,7 @@ class MOL(torch.nn.Module):
         for t in range(rho):
             p = pDyn[t,:,:]
 
-            x = self.solveAdj(p, xt,t, self.forward, None, auxG,True, self.eval)
+            x = self.solveAdj(p, xt,t, self.forward, None, auxG,True, self.eval,self.AD_efficient)
 
             ySolution[t,:,:]  = x
             xt = x
