@@ -1,6 +1,7 @@
 import torch
 import sourcedefender
-from HydroDLAdj.nonlinearSolver.BatchJacobian_AD import batchJacobian_AD
+#from HydroDLAdj.nonlinearSolver.BatchJacobian_AD import batchJacobian_AD
+from HydroDLAdj.nonlinearSolver.batchJacobian import batchJacobian
 from HydroDLAdj.nonlinearSolver.Jacobian import batchJacobian_AD_slow
 #import pydevd
 matrixSolve = torch.linalg.solve
@@ -27,7 +28,7 @@ class NewtonSolve(torch.autograd.Function):
     else:
         gg = G(x, p, p2, t, auxG)
     if AD_efficient:
-        dGdx = batchJacobian_AD(gg,x,graphed=True)
+        dGdx = batchJacobian(gg,x,graphed=True)
     else:
         dGdx = batchJacobian_AD_slow(gg, x, graphed=True)
     if torch.isnan(dGdx).any() or torch.isinf(dGdx).any():
@@ -52,7 +53,7 @@ class NewtonSolve(torch.autograd.Function):
               else:
                 gg = G(x, p, p2, t, auxG)
               if AD_efficient:
-                dGdx = batchJacobian_AD(gg,x,graphed=True)
+                dGdx = batchJacobian(gg,x,graphed=True)
               else:
                 dGdx = batchJacobian_AD_slow(gg, x, graphed=True)
               if torch.isnan(dGdx).any() or torch.isinf(dGdx).any():
@@ -85,13 +86,13 @@ class NewtonSolve(torch.autograd.Function):
           # dGdp is needed only upon convergence.
           if p2 is None:
             if AD_efficient:
-                dGdp = batchJacobian_AD(gg, p, graphed=True); dGdp2 = None
+                dGdp = batchJacobian(gg, p, graphed=True); dGdp2 = None
             else:
                 dGdp = batchJacobian_AD_slow(gg, p, graphed=True);
                 dGdp2 = None
           else:
             if AD_efficient:
-                dGdp, dGdp2 = batchJacobian_AD(gg, (p,p2),graphed=True)
+                dGdp, dGdp2 = batchJacobian(gg, (p,p2),graphed=True)
             else:
                 dGdp = batchJacobian_AD_slow(gg, p,graphed=True)# this one is needed only upon convergence.
                 dGdp2 = batchJacobian_AD_slow(gg, p2, graphed=True)
